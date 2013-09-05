@@ -3,7 +3,7 @@ Flurry
 
 Unique id generation service in scala
 
-Flurry is a "unique id" generation service written in scala, but accesible in any language using thrift. Flurry took it's inspiration (and very little code) from Twitter's snowflake service, but by starting from scratch, we have what I think is a cleaner implementation, less dependencies, and it's easily configurable and runnable.
+Flurry is a "unique id" generation service written in scala, but accesible in any language using thrift. Flurry took its inspiration (and very little code) from Twitter's snowflake service, but by starting from scratch, we have what I think is a cleaner implementation, less dependencies, and it's easily configurable and runnable.
 
 
 
