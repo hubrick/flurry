@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Flurry : Unique id generation service" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Flurry</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/BazuSports/flurry">View on GitHub</a>
+
+          <h1 id="project_title">Flurry</h1>
+          <h2 id="project_tagline">Unique id generation service</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/BazuSports/flurry/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/BazuSports/flurry/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>Flurry is a "unique id" generation service written in scala, but accesible in any language using thrift. Flurry took its inspiration (and very little code) from Twitter's snowflake service, but by starting from scratch, we have what I think is a cleaner implementation, less dependencies, and it's easily configurable and runnable.</p>
+
+<h2>
+<a name="running" class="anchor" href="#running"><span class="octicon octicon-link"></span></a>Running</h2>
+
+<p>Flurry comes with a service wrapper, which allows it to run on linux or OSX.  In order to run Flurry, follow the instructions below.</p>
+
+<ol>
+<li>Download a <a href="https://github.com/BazuSports/flurry/releases">release archive</a>
+</li>
+<li>Unzip the release archive and cd into the application directory</li>
+<li>Use the service wrapper to run Flurry (i.e. <em>service/flurry</em>)</li>
+</ol><h2>
+<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h2>
+
+<p>Flurry allows you to provide you own configuration file to override the default properties.  The default configuration is below.</p>
+
+<pre><code>flurry {
+    server-port = 9090
+
+    generator-class = com.chronotrack.flurry.ConfigurableGenerator
+
+    generator-config {
+        worker-id-generator-class = com.chronotrack.flurry.worker.StaticWorkerIdGenerator
+        workerId                  = 2
+        epochStart                = 1376937222000
+        workerIdBits              = 14
+        sequenceBits              = 10
+    }
+}
+</code></pre>
+
+<p>In order to override the values, you can put a file named application.conf in the flurry application directory and restart the flurry service.</p>
+
+<p>Here is an example of a custom configuration file.  You can omit any values you're not overriding as they will be infered from the default configuration.</p>
+
+<pre><code>flurry {
+    server-port = 9091
+
+    generator-config {
+        worker-id-generator-class = com.chronotrack.flurry.worker.HostWorkerIdGenerator
+    }
+}
+</code></pre>
+
+<h3>
+<a name="configuration-properties" class="anchor" href="#configuration-properties"><span class="octicon octicon-link"></span></a>Configuration properties</h3>
+
+<ul>
+<li><p><strong>server-port</strong> - the port on which the thrift server will listen on</p></li>
+<li><p><strong>generator-class</strong> - the implementation class of the generator (for now, flurry only supports the ConfigurableGenerator class)</p></li>
+<li>
+<p><strong>generator-config</strong> - configurations used by the generator</p>
+
+<ul>
+<li>
+<strong>worker-id-generator-class</strong> - the class the is responsible for generating the worker id.  There are currently two
+supported classes (HostWorkerIdGenerator and StaticWorkerIdGenerator)</li>
+<li>
+<strong>workerId</strong> - If you are using StaticWorkerIdGenerator, you can specify a static worker id using this option</li>
+<li>
+<strong>epochStart</strong> - The start of the epoch time for your software (once you create this, changing it can and will create collisions)</li>
+<li>
+<strong>workerIdBits</strong> - The number of bits to use for the worker part of the 64 bit id</li>
+<li>
+<strong>sequenceBits</strong> - The number of bits to use fot the sequence bit part of the id</li>
+</ul>
+</li>
+</ul><p><em>64 - (workerIdBits + sequenceBits) is the number of bits used for the time part of the id, so make sure you leave enough to support however long of a period you think you need.
+(i.e. 40 bits = 2^40 = 1099511627776. Divide by 3.15569e10 [milliseconds in a year] and you get 34.8 years.</em></p>
+
+<p><em>Same goes for worker id and sequence.</em></p>
+
+<ul>
+<li><em>14 bits for worker id = 2^14 = 16384 unique machines you can support.</em></li>
+<li><em>10 bits for sequence = 2^10 = 1024 ids per millisecond per worker you can support.</em></li>
+</ul><p><em>You can tune your time, worker, sequence support as needed for your application</em></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Flurry maintained by <a href="https://github.com/BazuSports">BazuSports</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
