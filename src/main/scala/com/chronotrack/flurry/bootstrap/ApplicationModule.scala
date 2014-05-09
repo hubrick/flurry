@@ -20,18 +20,18 @@ import com.google.inject.{Scopes, Key, AbstractModule}
 import org.slf4j.LoggerFactory
 import com.google.inject.name.Names
 import ch.qos.logback.classic.{Level, LoggerContext}
-import com.typesafe.scalalogging.slf4j.Logging
 import scala.collection.JavaConversions._
 import com.typesafe.config.{ConfigValueType, ConfigValue, ConfigFactory, Config}
 import com.chronotrack.flurry.Generator
 import com.chronotrack.flurry.worker.WorkerIdGenerator
+import com.typesafe.scalalogging.slf4j.LazyLogging
 
 /**
  * User: ilya
  * Date: 8/15/13
  * Time: 6:44 PM
  */
-class ApplicationModule extends AbstractModule with Logging {
+class ApplicationModule extends AbstractModule with LazyLogging {
 
   override protected def configure: Unit = {
     try {

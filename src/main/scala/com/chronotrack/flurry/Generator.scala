@@ -16,15 +16,15 @@
 
 package com.chronotrack.flurry
 
-import com.typesafe.scalalogging.slf4j.Logging
 import com.chronotrack.flurry.worker.WorkerIdGenerator
+import com.typesafe.scalalogging.slf4j.LazyLogging
 
 /**
  * User: ilya
  * Date: 8/15/13
  * Time: 10:48 AM
  */
-trait Generator extends Logging {
+trait Generator extends LazyLogging {
 
   protected[this] val workerIdGenerator: WorkerIdGenerator
   lazy val workerId: Long = workerIdGenerator.workerId
