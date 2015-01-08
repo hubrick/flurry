@@ -13,7 +13,18 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+ 
+buildscript {
+  repositories { jcenter() }
+  dependencies {
+    classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
+  }
+}
 
+plugins {
+	id 'java' // or 'groovy' Must be explicitly applied
+  	id 'com.github.johnrengelman.shadow' version '1.2.0'
+}
 
 apply plugin: 'scala'
 apply plugin: 'idea'
@@ -27,70 +38,66 @@ mainClassName = "com.chronotrack.flurry.Runner"
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
 
-
 project.ext {
-  scalaVersion = "2.11.0"
-  scalaDependencyVersion = "2.11"
-  akkaScalaVersion = "_2.11"
+  	scalaVersion = "2.11.0"
+  	scalaDependencyVersion = "2.11"
+  	akkaScalaVersion = "_2.11"
 
-  akkaVersion = "2.3.2"
+  	akkaVersion = "2.3.2"
 }
 
 repositories {
-  mavenCentral()
-  maven { url "http://repo.typesafe.com/typesafe/releases/" }
-  maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-  maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-
+ 	jcenter()
+  	mavenCentral()
+  	maven { url "http://repo.typesafe.com/typesafe/releases/" }
+  	maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+  	maven { url "https://oss.sonatype.org/content/repositories/releases/" }
 }
 
 dependencies {
-  scalaTools "org.scala-lang:scala-compiler:${scalaVersion}"
-  scalaTools "org.scala-lang:scala-library:${scalaVersion}"
+	compile "org.scala-lang:scala-library:${scalaVersion}"
+	compile("org.scala-lang:scala-reflect:${scalaVersion}") { force = true }
+	compile("org.scala-lang:scala-actors:${scalaVersion}") { force = true }
 
-  compile "org.scala-lang:scala-library:${scalaVersion}"
-  compile("org.scala-lang:scala-reflect:${scalaVersion}") { force = true }
-  compile("org.scala-lang:scala-actors:${scalaVersion}") { force = true }
+	compile "com.typesafe.akka:akka-slf4j${akkaScalaVersion}:${akkaVersion}"
+	compile "com.typesafe.akka:akka-actor${akkaScalaVersion}:${akkaVersion}"
+	compile "ch.qos.logback:logback-classic:1.0.13"
+	//    compile "io.netty:netty-all:4.0.7.Final"
+	compile "org.apache.thrift:libthrift:0.9.1"
+	compile "com.facebook.nifty:nifty-core:0.12.0"
+  	compile("com.google.inject:guice:3.0") {
+    	force = true
+  	}
+  	compile "com.typesafe.scala-logging:scala-logging-slf4j_${scalaDependencyVersion}:2.1.2"
 
-  compile "com.typesafe.akka:akka-slf4j${akkaScalaVersion}:${akkaVersion}"
-  compile "com.typesafe.akka:akka-actor${akkaScalaVersion}:${akkaVersion}"
-  compile "ch.qos.logback:logback-classic:1.0.13"
-//    compile "io.netty:netty-all:4.0.7.Final"
-  compile "org.apache.thrift:libthrift:0.9.1"
-  compile "com.facebook.nifty:nifty-core:0.12.0"
-  compile("com.google.inject:guice:3.0") {
-    force = true
-  }
-  compile "com.typesafe.scala-logging:scala-logging-slf4j_${scalaDependencyVersion}:2.1.2"
-
-  testCompile "org.scalatest:scalatest_${scalaDependencyVersion}:2.1.6"
+  	testCompile "org.scalatest:scalatest_${scalaDependencyVersion}:2.1.6"
 }
 
 test {
-  testLogging.showStandardStreams = true
+  	testLogging.showStandardStreams = true
 
-  //tweaking memory settings for the forked vm that runs tests
-  jvmArgs '-Xmx1024m', '-XX:MaxPermSize=1024m'
+  	//tweaking memory settings for the forked vm that runs tests
+  	jvmArgs '-Xmx1024m', '-XX:MaxPermSize=1024m'
 
-  //listening to test execution events
-  beforeTest { descriptor ->
-    logger.lifecycle("Running: " + descriptor)
-  }
-  onOutput { descriptor, event ->
-    logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
-  }
+  	//listening to test execution events
+  	beforeTest { descriptor ->
+    	logger.lifecycle("Running: " + descriptor)
+  	}
+  	onOutput { descriptor, event ->
+    	logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
+  	}
 }
 
 
 task wrapper(type: Wrapper) { gradleVersion = "1.12" }
 
 tasks.withType(ScalaCompile) {
-  scalaCompileOptions.useAnt = false
-  scalaCompileOptions.fork = true
-  configure(scalaCompileOptions.forkOptions) {
-    memoryMaximumSize = '1g'
-    jvmArgs = ['-XX:MaxPermSize=512m']
-  }
+  	scalaCompileOptions.useAnt = false
+  	scalaCompileOptions.fork = true
+  	configure(scalaCompileOptions.forkOptions) {
+    	memoryMaximumSize = '1g'
+    	jvmArgs = ['-XX:MaxPermSize=512m']
+  	}
 }
 
 task thrift << {
